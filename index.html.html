@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebate QBR Dashboard - Banner Health</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-container">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="Dashboard">Overview</button>
+                    <button class="nav-tab" data-tab="Tier Tracking">Tier Tracking</button>
+                    <button class="nav-tab" data-tab="Payment History">Payment Details</button>
+                    <button class="nav-tab" data-tab="Forecast">Forecast & Scenarios</button>
+                    <button class="nav-tab" data-tab="Data Explorer">Data Explorer</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Banner -->
+        <div class="banner">
+            <div class="banner-container">
+                <span class="banner-text">✓ Last Updated: Today 6:00 AM CST (Daily Auto-Refresh) • Banner Health Enterprise Agreement • 300+ facilities tracked</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Rail -->
+            <aside class="left-rail">
+                <div class="rail-header">
+                    <i data-lucide="activity"></i>
+                    <span class="rail-title">Rebate</span>
+                </div>
+                <div class="rail-content">
+                    <!-- Customer Selection -->
+                    <div class="rail-section">
+                        <div class="section-title">ENTERPRISE ACCOUNT</div>
+                        <div class="customer-selector">
+                            <select class="customer-dropdown" id="enterpriseAccountSelector">
+                                <option value="banner">Banner Health (Current)</option>
+                                <option value="mayo">Mayo Clinic</option>
+                                <option value="cleveland">Cleveland Clinic</option>
+                                <option value="kaiser">Kaiser Permanente</option>
+                                <option value="intermountain">Intermountain Healthcare</option>
+                            </select>
+                        </div>
+                        <div class="customer-stats" id="customerStatsContainer">
+                            <div class="stat-item">
+                                <span class="stat-label">Facilities:</span>
+                                <span class="stat-value" id="facilitiesCount">325</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Contract Period:</span>
+                                <span class="stat-value" id="contractPeriod">Apr 2024 - Apr 2026</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Rebate Type:</span>
+                                <span class="stat-value" id="rebateType">Tiered Annual</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Payment History Granularity -->
+                    <div class="rail-section">
+                        <div class="section-title">PAYMENT GRANULARITY</div>
+                        <div class="granularity-controls">
+                            <div class="granularity-buttons-compact">
+                                <button class="granularity-btn-compact active" data-granularity="quarterly">Q</button>
+                                <button class="granularity-btn-compact" data-granularity="monthly">M</button>
+                                <button class="granularity-btn-compact" data-granularity="weekly">W</button>
+                            </div>
+                            <div class="granularity-info">
+                                <div class="info-text">Current view: <span class="current-granularity">Quarterly</span></div>
+                                <div class="info-text">Data range: Last 24 months</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts & Opportunities -->
+                    <div class="rail-section">
+                        <div class="section-title">TIER ALERTS</div>
+                        <div class="alert-items" id="tierAlertsContainer">
+                            <div class="alert-item opportunity" id="alertOpportunity">
+                                <div class="alert-icon">
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title" id="alertOpportunityTitle">46% increase needed</div>
+                                    <div class="alert-desc" id="alertOpportunityDesc">to unlock $201K rebates</div>
+                                </div>
+                            </div>
+                            <div class="alert-item warning" id="alertTime">
+                                <div class="alert-icon">
+                                    <i data-lucide="clock"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title" id="alertTimeTitle">35 days remaining</div>
+                                    <div class="alert-desc" id="alertTimeDesc">until quarter end</div>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Status -->
+                    <div class="rail-section">
+                        <div class="section-title">DATA STATUS</div>
+                        <div class="helper-text">
+                            <div class="status-item">
+                                <i data-lucide="clock"></i>
+                                <span>Last update: <strong>Today 6:00 AM CST</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </aside>
+
+            <!-- Canvas -->
+            <main class="canvas">
+                <div class="canvas-container">
+                    <!-- Dashboard Page -->
+                    <div class="page-content active" data-page="Dashboard">
+                        <!-- Critical Alerts Row -->
+                        <div class="alert-banner" id="actionRequiredBanner">
+                            <div class="alert-content">
+                                <i data-lucide="alert-triangle"></i>
+                                <div class="alert-text" id="actionRequiredText">
+                                    <strong>Action Required:</strong> Banner Health is $1.937M short of Tier 1 threshold. Current run rate will NOT achieve rebate eligibility by quarter end.
+                                </div>
+                                <button class="alert-action" id="viewOpportunitiesBtn">View Opportunities</button>
+                            </div>
+                        </div>
+
+                        <!-- Real-Time KPIs -->
+                        <div class="kpi-row">
+                            <div class="kpi-card blue">
+                                <div class="kpi-title">CURRENT QUARTER PURCHASES</div>
+                                <div class="kpi-content">
+                                    <div class="kpi-main">
+                                        <div class="kpi-value" id="currentQuarterPurchases">$1.413M</div>
+                                        <div class="kpi-subtitle" id="currentQuarterSubtitle">Q2 CY25 (as of 5/26/25) • 42% of Tier 1</div>
+                                    </div>
+                                    <div class="kpi-trend">
+                                        <div class="trend-change" id="currentQuarterTrend">+8.5%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-card green">
+                                <div class="kpi-title">PROJECTED QUARTER END</div>
+                                <div class="kpi-content">
+                                    <div class="kpi-main">
+                                        <div class="kpi-value" id="projectedQuarterEnd">$2.296M</div>
+                                        <div class="kpi-subtitle" id="projectedQuarterSubtitle">Based on current run rate (68% of Tier 1)</div>
+                                    </div>
+                                    <div class="kpi-trend"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-card amber">
+                                <div class="kpi-title">REBATE ELIGIBILITY STATUS</div>
+                                <div class="kpi-content">
+                                    <div class="kpi-main">
+                                        <div class="kpi-value" id="rebateEligibilityStatus">Not Eligible</div>
+                                        <div class="kpi-subtitle" id="rebateEligibilitySubtitle">Need $1.937M more for Tier 1 (6.0% avg rate)</div>
+                                    </div>
+                                    <div class="kpi-trend"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-card red">
+                                <div class="kpi-title">POTENTIAL REBATE VALUE</div>
+                                <div class="kpi-content">
+                                    <div class="kpi-main">
+                                        <div class="kpi-value" id="potentialRebateValue">$0</div>
+                                        <div class="kpi-subtitle" id="potentialRebateSubtitle">Could be $201K if Tier 1 achieved</div>
+                                    </div>
+                                    <div class="kpi-trend"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 24-Month Purchase Trend -->
+                        <div class="trend-row">
+                            <div class="chart-placeholder">
+                                <div class="chart-header">
+                                    <div class="chart-title">24-Month Purchase Trend</div>
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                                <div class="trend-chart" id="purchaseTrendChart">
+                                    <div class="trend-bars">
+                                        <div class="trend-period">
+                                            <div class="trend-bar q1" style="height: 35%"></div>
+                                            <div class="trend-label">Q1-23</div>
+                                            <div class="trend-value">$1.8M</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q2" style="height: 40%"></div>
+                                            <div class="trend-label">Q2-23</div>
+                                            <div class="trend-value">$2.1M</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q3" style="height: 50%"></div>
+                                            <div class="trend-label">Q3-23</div>
+                                            <div class="trend-value">$2.7M</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q4" style="height: 85%"></div>
+                                            <div class="trend-label">Q4-23</div>
+                                            <div class="trend-value">$4.6M</div>
+                                            <div class="tier-achieved">Tier 3</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q1" style="height: 78%"></div>
+                                            <div class="trend-label">Q1-24</div>
+                                            <div class="trend-value">$4.2M</div>
+                                            <div class="tier-achieved">Tier 3</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q2" style="height: 68%"></div>
+                                            <div class="trend-label">Q2-24</div>
+                                            <div class="trend-value">$3.7M</div>
+                                            <div class="tier-achieved">Tier 1</div>
+                                        </div>
+                                        <div class="trend-period">
+                                            <div class="trend-bar q3" style="height: 55%"></div>
+                                            <div class="trend-label">Q3-24</div>
+                                            <div class="trend-value">$3.0M</div>
+                                            <div class="tier-achieved">None</div>
+                                        </div>
+                                        <div class="trend-period current">
+                                            <div class="trend-bar q1" style="height: 28%"></div>
+                                            <div class="trend-label">Q2-25</div>
+                                            <div class="trend-value">$1.4M</div>
+                                            <div class="tier-achieved">Current</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Customer Summary -->
+                        <div class="chart-placeholder full-width">
+                                <div class="chart-header">
+                                <div class="chart-title">Customer Summary</div>
+                            </div>
+                            <div class="customer-summary">
+                                <div class="summary-grid">
+                                    <div class="summary-card">
+                                        <div class="summary-title">Current Performance</div>
+                                        <div class="summary-content">
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Q2 CY25 Purchases:</span>
+                                                <span class="stat-value" id="summaryCurrentPurchases">$1,413,000</span>
+                                            </div>
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Progress to Tier 1:</span>
+                                                <span class="stat-value" id="summaryProgressTier1">42.1%</span>
+                                            </div>
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Facilities Participating:</span>
+                                                <span class="stat-value" id="summaryFacilities">325 of 325</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <div class="summary-title">Rebate Opportunity</div>
+                                        <div class="summary-content">
+                                            <div class="summary-stat highlight">
+                                                <span class="stat-label">Additional Purchases Needed:</span>
+                                                <span class="stat-value" id="summaryAdditionalNeeded">$1,937,000</span>
+                                            </div>
+                                            <div class="summary-stat highlight">
+                                                <span class="stat-label">Potential Tier 1 Rebate:</span>
+                                                <span class="stat-value" id="summaryPotentialRebate">$201,000</span>
+                                            </div>
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Days Remaining:</span>
+                                                <span class="stat-value" id="summaryDaysRemaining">35 days</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <div class="summary-title">Historical Context</div>
+                                        <div class="summary-content">
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Best Quarter:</span>
+                                                <span class="stat-value" id="summaryBestQuarter">Q4-23: $4.6M (Tier 3)</span>
+                                            </div>
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Total Rebates Earned (24mo):</span>
+                                                <span class="stat-value" id="summaryTotalRebates">$485,000</span>
+                                            </div>
+                                            <div class="summary-stat">
+                                                <span class="stat-label">Average Quarterly Growth:</span>
+                                                <span class="stat-value" id="summaryAvgGrowth">+12.5%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                                        <!-- Tier Tracking Page -->
+                    <div class="page-content" data-page="Tier Tracking">
+                        <!-- Tier Achievement Progress & Opportunities -->
+                        <div class="chart-placeholder full-width">
+                                <div class="chart-header">
+                                <div class="chart-title">Tier Achievement Progress & Opportunities</div>
+
+                            </div>
+                            <div class="tier-progress-container" id="tierProgressContainer">
+                                <div class="tier-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill current" id="currentProgressFill" style="width: 28%"></div>
+                                        <div class="progress-fill forecast" id="forecastProgressFill" style="width: 46%"></div>
+                                        <div class="tier-marker tier1" style="left: 67%">
+                                            <div class="tier-marker-number">1</div>
+                                            <div class="tier-label">Tier 1<br>$3.35M<br>6.0% rate</div>
+                                        </div>
+                                        <div class="tier-marker tier2" style="left: 77%">
+                                            <div class="tier-marker-number">2</div>
+                                            <div class="tier-label">Tier 2<br>$3.85M<br>9.0% rate</div>
+                                        </div>
+                                        <div class="tier-marker tier3" style="left: 87%">
+                                            <div class="tier-marker-number">3</div>
+                                            <div class="tier-label">Tier 3<br>$4.35M<br>16.0% rate</div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-color current"></div>
+                                            <span id="currentProgressText">Current: $1.413M (May 26)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color forecast"></div>
+                                            <span id="forecastProgressText">Forecast: $2.296M (June 30)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color opportunity"></div>
+                                            <span id="gapToTier1Text">Gap to Tier 1: $1.937M (58% increase needed)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="opportunity-callouts" id="opportunityCallouts">
+                                <div class="callout info">
+                                    <i data-lucide="lightbulb"></i>
+                                    <span id="opportunityText"><strong>Opportunity:</strong> 58% increase in purchases would unlock $201K in rebates</span>
+                                </div>
+                                <div class="callout warning">
+                                    <i data-lucide="clock"></i>
+                                    <span id="timeRemainingText"><strong>Time Remaining:</strong> 35 days until quarter end (June 30, 2025)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tier Progress Visualization -->
+                        <div class="chart-placeholder full-width">
+                            <div class="chart-header">
+                                <div class="chart-title">Tier Progress Visualization</div>
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <div class="detailed-tier-progress" id="detailedTierProgress">
+                                <div class="tier-details">
+                                    <div class="tier-card" id="tier1Card">
+                                        <div class="tier-name">Tier 1</div>
+                                        <div class="tier-target">$3,350,000</div>
+                                        <div class="tier-gap" id="tier1Gap">Gap: $1,937K</div>
+                                        <div class="tier-status not-achieved" id="tier1Status">Not Achieved</div>
+                                    </div>
+                                    <div class="tier-card" id="tier2Card">
+                                        <div class="tier-name">Tier 2</div>
+                                        <div class="tier-target">$3,850,000</div>
+                                        <div class="tier-gap" id="tier2Gap">Gap: $2,437K</div>
+                                        <div class="tier-status not-achieved" id="tier2Status">Not Achieved</div>
+                                    </div>
+                                    <div class="tier-card" id="tier3Card">
+                                        <div class="tier-name">Tier 3</div>
+                                        <div class="tier-target">$4,350,000</div>
+                                        <div class="tier-gap" id="tier3Gap">Gap: $2,937K</div>
+                                        <div class="tier-status not-achieved" id="tier3Status">Not Achieved</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                                        <!-- Payment History Page -->
+                    <div class="page-content" data-page="Payment History">
+                        <!-- Top Row: Fiscal Year + 24-Month History -->
+                        <div class="charts-row">
+                            <div class="chart-placeholder">
+                                <div class="chart-header">
+                                    <div class="chart-title">Rebate Distribution by Fiscal Year</div>
+                                    <i data-lucide="calendar"></i>
+                                </div>
+                                <div class="fiscal-year-breakdown">
+                                    <div class="fy-item">
+                                        <div class="fy-header">
+                                            <div class="fy-label">FY 2023</div>
+                                            <div class="fy-total">$262,400</div>
+                                        </div>
+                                        <div class="fy-details">
+                                            <div class="fy-detail">Q4: $262,400 (Tier 3)</div>
+                                        </div>
+                                    </div>
+                                    <div class="fy-item">
+                                        <div class="fy-header">
+                                            <div class="fy-label">FY 2024</div>
+                                            <div class="fy-total">$368,056</div>
+                                        </div>
+                                        <div class="fy-details">
+                                            <div class="fy-detail">Q1: $151,200 (Tier 3)</div>
+                                            <div class="fy-detail">Q2: $72,000 (Tier 1)</div>
+                                            <div class="fy-detail">Q3: $0 (None)</div>
+                                            <div class="fy-detail">Q4: $145,856 (Tier 3)</div>
+                                        </div>
+                                    </div>
+                                    <div class="fy-item current">
+                                        <div class="fy-header">
+                                            <div class="fy-label">FY 2025 (YTD)</div>
+                                            <div class="fy-total">$83,443</div>
+                                        </div>
+                                        <div class="fy-details">
+                                            <div class="fy-detail">Q1: $83,443 (Tier 3)</div>
+                                            <div class="fy-detail">Q2: $0 (Projected - None)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder">
+                                <div class="chart-header">
+                                    <div class="chart-title">24-Month Rolling Rebate History</div>
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                                <div class="rolling-history">
+                                    <div class="history-chart">
+                                        <div class="history-bars">
+                                            <div class="history-period">
+                                                <div class="history-bar" style="height: 85%" data-amount="262400"></div>
+                                                <div class="period-label">Q4-23</div>
+                                                <div class="amount-label">$262K</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar" style="height: 50%" data-amount="151200"></div>
+                                                <div class="period-label">Q1-24</div>
+                                                <div class="amount-label">$151K</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar" style="height: 25%" data-amount="72000"></div>
+                                                <div class="period-label">Q2-24</div>
+                                                <div class="amount-label">$72K</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar" style="height: 0%" data-amount="0"></div>
+                                                <div class="period-label">Q3-24</div>
+                                                <div class="amount-label">$0</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar" style="height: 45%" data-amount="145856"></div>
+                                                <div class="period-label">Q4-24</div>
+                                                <div class="amount-label">$146K</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar pending" style="height: 30%" data-amount="83443"></div>
+                                                <div class="period-label">Q1-25</div>
+                                                <div class="amount-label">$83K</div>
+                                            </div>
+                                            <div class="history-period">
+                                                <div class="history-bar projected" style="height: 0%" data-amount="0"></div>
+                                                <div class="period-label">Q2-25</div>
+                                                <div class="amount-label">$0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="history-summary">
+                                        <div class="summary-item">
+                                            <div class="summary-label">Total Rebates (24mo):</div>
+                                            <div class="summary-value">$714,899</div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <div class="summary-label">Average per Quarter:</div>
+                                            <div class="summary-value">$102,128</div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <div class="summary-label">Best Quarter:</div>
+                                            <div class="summary-value">Q4-23 ($262K)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Details Table -->
+                        <div class="data-explorer">
+                            <div class="chart-header">
+                                <div class="chart-title">Rebate Payment Details</div>
+                                <i data-lucide="table"></i>
+                            </div>
+                            <div class="payment-table" id="paymentDetailsTable">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Time Period</th>
+                                            <th>Total Purchases</th>
+                                            <th>Rebate Earned</th>
+                                            <th>Rebate Paid</th>
+                                            <th>Balance Pending</th>
+                                            <th>Payment Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="paymentTableBody">
+                                        <tr>
+                                            <td>CY23 Q4</td>
+                                            <td>$4,580,000</td>
+                                            <td>$262,400</td>
+                                            <td>$262,400</td>
+                                            <td>$0</td>
+                                            <td>02/15/2024</td>
+                                            <td><span class="status-badge paid">Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY24 Q1</td>
+                                            <td>$4,200,000</td>
+                                            <td>$151,200</td>
+                                            <td>$151,200</td>
+                                            <td>$0</td>
+                                            <td>05/15/2024</td>
+                                            <td><span class="status-badge paid">Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY24 Q2</td>
+                                            <td>$3,720,000</td>
+                                            <td>$72,000</td>
+                                            <td>$72,000</td>
+                                            <td>$0</td>
+                                            <td>08/15/2024</td>
+                                            <td><span class="status-badge paid">Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY24 Q3</td>
+                                            <td>$3,000,000</td>
+                                            <td>$0</td>
+                                            <td>$0</td>
+                                            <td>$0</td>
+                                            <td>N/A</td>
+                                            <td><span class="status-badge none">No Rebate</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY24 Q4</td>
+                                            <td>$4,565,963</td>
+                                            <td>$145,856</td>
+                                            <td>$120,000</td>
+                                            <td>$25,856</td>
+                                            <td>02/15/2025</td>
+                                            <td><span class="status-badge partial">Partially Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY25 Q1</td>
+                                            <td>$4,254,200</td>
+                                            <td>$83,443</td>
+                                            <td>$0</td>
+                                            <td>$83,443</td>
+                                            <td>05/30/2025</td>
+                                            <td><span class="status-badge pending">Pending</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>CY25 Q2 (Current)</td>
+                                            <td>$1,413,000</td>
+                                            <td>$0</td>
+                                            <td>$0</td>
+                                            <td>$0</td>
+                                            <td>08/30/2025</td>
+                                            <td><span class="status-badge projected">No Rebate (Projected)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+
+                        <!-- Facility Allocation Table -->
+                        <div class="chart-placeholder full-width">
+                            <div class="chart-header">
+                                <div class="chart-title">Rebate Distribution Across Facilities (Top 20 by Volume)</div>
+                                <div class="chart-actions">
+                                    <button class="chart-btn"><i data-lucide="map-pin"></i> View All 325 Facilities</button>
+                                    <button class="chart-btn"><i data-lucide="download"></i> Export Facility Report</button>
+                                </div>
+                            </div>
+                            <div class="facility-allocation">
+                                <table class="facility-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Facility Name</th>
+                                            <th>Location</th>
+                                            <th>Purchase Volume</th>
+                                            <th>% of Total</th>
+                                            <th>Allocated Rebate</th>
+                                            <th>Payment Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Banner University Medical Center Phoenix</td>
+                                            <td>Phoenix, AZ</td>
+                                            <td>$187,200</td>
+                                            <td>4.8%</td>
+                                            <td>$7,020</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Desert Medical Center</td>
+                                            <td>Mesa, AZ</td>
+                                            <td>$154,300</td>
+                                            <td>4.0%</td>
+                                            <td>$5,789</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Gateway Medical Center</td>
+                                            <td>Gilbert, AZ</td>
+                                            <td>$142,800</td>
+                                            <td>3.7%</td>
+                                            <td>$5,359</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Estrella Medical Center</td>
+                                            <td>Phoenix, AZ</td>
+                                            <td>$138,900</td>
+                                            <td>3.6%</td>
+                                            <td>$5,213</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Thunderbird Medical Center</td>
+                                            <td>Glendale, AZ</td>
+                                            <td>$125,600</td>
+                                            <td>3.2%</td>
+                                            <td>$4,714</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Good Samaritan Medical Center</td>
+                                            <td>Phoenix, AZ</td>
+                                            <td>$119,400</td>
+                                            <td>3.1%</td>
+                                            <td>$4,482</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banner Boswell Medical Center</td>
+                                            <td>Sun City, AZ</td>
+                                            <td>$108,200</td>
+                                            <td>2.8%</td>
+                                            <td>$4,062</td>
+                                            <td><span class="status-badge pending">Pending Q1</span></td>
+                                        </tr>
+                                        <tr class="subtotal-row">
+                                            <td colspan="2"><strong>Top 7 Facilities Subtotal</strong></td>
+                                            <td><strong>$1,076,400</strong></td>
+                                            <td><strong>27.8%</strong></td>
+                                            <td><strong>$40,392</strong></td>
+                                            <td><span class="status-badge pending">Pending</span></td>
+                                        </tr>
+                                        <tr class="remaining-row">
+                                            <td colspan="2"><em>Remaining 318 Facilities</em></td>
+                                            <td><em>$2,791,400</em></td>
+                                            <td><em>72.2%</em></td>
+                                            <td><em>$104,741</em></td>
+                                            <td><span class="status-badge pending">Pending</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="facility-notes">
+                                    <div class="note-item">
+                                        <i data-lucide="info"></i>
+                                        <span><strong>Allocation Method:</strong> Rebates distributed proportionally based on each facility's purchase volume within the contract period.</span>
+                                    </div>
+                                    <div class="note-item">
+                                        <i data-lucide="map-pin"></i>
+                                        <span><strong>Geographic Distribution:</strong> 325 facilities across AZ (89%), NV (7%), CO (3%), and CA (1%).</span>
+                                    </div>
+                                    <div class="note-item">
+                                        <i data-lucide="dollar-sign"></i>
+                                        <span><strong>Payment Timeline:</strong> Facility-level rebate distribution typically processed within 30 days of tier achievement confirmation.</span>
+                                    </div>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forecast & Scenarios Page -->
+                    <div class="page-content" data-page="Forecast">
+                        <!-- Top Section: What-If Forecast and Product Mix Editor -->
+                        <div class="charts-row two-col">
+                            <div class="chart-placeholder">
+                                <div class="chart-header">
+                                    <div class="chart-title">What-If Forecast</div>
+                                    <i data-lucide="calculator"></i>
+                                </div>
+                                <div class="what-if-forecast">
+                                    <div class="forecast-input-section">
+                                        <div class="input-group">
+                                            <label for="forecastPurchaseInput" class="input-label">Forecast Purchases ($)</label>
+                                            <input type="number" 
+                                                   id="forecastPurchaseInput" 
+                                                   class="forecast-input" 
+                                                   value="4500000" 
+                                                   min="0" 
+                                                   step="10000"
+                                                   placeholder="Enter forecast amount">
+                                        </div>
+                                    </div>
+                                    <div class="forecast-results">
+                                        <div class="result-item">
+                                            <div class="result-label">Projected Rebate</div>
+                                            <div class="result-value" id="projectedRebate">$145,200</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-label">Tier Outcome</div>
+                                            <div class="result-value tier-3" id="tierOutcome">Tier 3</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-label">Effective Rebate %</div>
+                                            <div class="result-value" id="effectiveRate">3.23%</div>
+                                        </div>
+                                    </div>
+                                    <div class="product-rebate-breakdown" id="productRebateBreakdown">
+                                        <h4>Product Rebate Breakdown</h4>
+                                        <div class="product-rebate-list">
+                                            <div class="product-rebate-item">
+                                                <span class="product-name">Brady (30%)</span>
+                                                <span class="product-amount">$21,600</span>
+                                                <span class="product-rate">16.0%</span>
+                                            </div>
+                                            <div class="product-rebate-item">
+                                                <span class="product-name">CRT-P (25%)</span>
+                                                <span class="product-amount">$13,500</span>
+                                                <span class="product-rate">12.0%</span>
+                                            </div>
+                                            <div class="product-rebate-item">
+                                                <span class="product-name">Tachy (25%)</span>
+                                                <span class="product-amount">$5,625</span>
+                                                <span class="product-rate">5.0%</span>
+                                            </div>
+                                            <div class="product-rebate-item">
+                                                <span class="product-name">Micra VR (15%)</span>
+                                                <span class="product-amount">$3,375</span>
+                                                <span class="product-rate">5.0%</span>
+                                            </div>
+                                            <div class="product-rebate-item">
+                                                <span class="product-name">Micra AV (5%)</span>
+                                                <span class="product-amount">$675</span>
+                                                <span class="product-rate">3.0%</span>
+                                </div>
+                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder">
+                                <div class="chart-header">
+                                    <div class="chart-title">Product Mix Editor</div>
+                                    <i data-lucide="pie-chart"></i>
+                                </div>
+                                <div class="product-mix-editor">
+                                    <div class="mix-editor-item">
+                                        <label>Brady</label>
+                                        <input type="range" min="0" max="100" value="30" data-product="Brady" class="product-slider">
+                                        <span class="percentage-display">30%</span>
+                                    </div>
+                                    <div class="mix-editor-item">
+                                        <label>CRT-P</label>
+                                        <input type="range" min="0" max="100" value="25" data-product="CRT-P" class="product-slider">
+                                        <span class="percentage-display">25%</span>
+                                </div>
+                                    <div class="mix-editor-item">
+                                        <label>Tachy</label>
+                                        <input type="range" min="0" max="100" value="25" data-product="Tachy" class="product-slider">
+                                        <span class="percentage-display">25%</span>
+                            </div>
+                                    <div class="mix-editor-item">
+                                        <label>Micra VR</label>
+                                        <input type="range" min="0" max="100" value="15" data-product="Micra VR" class="product-slider">
+                                        <span class="percentage-display">15%</span>
+                                    </div>
+                                    <div class="mix-editor-item">
+                                        <label>Micra AV</label>
+                                        <input type="range" min="0" max="100" value="5" data-product="Micra AV" class="product-slider">
+                                        <span class="percentage-display">5%</span>
+                                </div>
+                                    <div class="mix-editor-footer">
+                                        <div class="total-percentage">
+                                            <span>Total: <span id="totalPercentage">100%</span></span>
+                                            <div class="percentage-status" id="percentageStatus">✓ Valid</div>
+                            </div>
+                                        <button id="estimateButton" class="estimate-btn">Let's estimate!</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rebate Agreement Table -->
+                        <div class="data-explorer">
+                            <div class="chart-header">
+                                <div class="chart-title">Rebate Agreement - Tiers & Rates</div>
+                                <i data-lucide="file-text"></i>
+                            </div>
+                            <div class="agreement-table">
+                                <table id="rebateAgreementTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Tier</th>
+                                            <th>Target Threshold</th>
+                                            <th>Brady</th>
+                                            <th>CRT-P</th>
+                                            <th>Tachy</th>
+                                            <th>Micra VR</th>
+                                            <th>Micra AV</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Tier 1</td>
+                                            <td>$3,350,000</td>
+                                            <td>6.0%</td>
+                                            <td>4.0%</td>
+                                            <td>5.0%</td>
+                                            <td>5.0%</td>
+                                            <td>3.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tier 2</td>
+                                            <td>$3,850,000</td>
+                                            <td>9.0%</td>
+                                            <td>7.0%</td>
+                                            <td>5.0%</td>
+                                            <td>5.0%</td>
+                                            <td>3.0%</td>
+                                        </tr>
+                                        <tr class="tier-achieved">
+                                            <td>Tier 3</td>
+                                            <td>$4,350,000</td>
+                                            <td>16.0%</td>
+                                            <td>12.0%</td>
+                                            <td>5.0%</td>
+                                            <td>5.0%</td>
+                                            <td>3.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="agreement-notes">
+                                    <div class="note-item">
+                                        <i data-lucide="info"></i>
+                                        <span><strong>Current Forecast:</strong> Based on $4,500,000 total purchases, you will achieve Tier 3 rebates.</span>
+                                    </div>
+                                    <div class="note-item">
+                                        <i data-lucide="calculator"></i>
+                                        <span><strong>Calculation Method:</strong> Rebate percentages apply to the portion of purchases for each product type.</span>
+                                    </div>
+                                    <div class="note-item">
+                                        <i data-lucide="calendar"></i>
+                                        <span><strong>Contract Period:</strong> April 2024 - April 2026 • Annual tier achievement evaluation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Explorer Page -->
+                    <div class="page-content" data-page="Data Explorer">
+                        <!-- Customer Details Table -->
+                        <div class="chart-placeholder full-width">
+                            <div class="chart-header">
+                                <div class="chart-title">Customer Details</div>
+                                <div class="chart-actions">
+                                    <button class="chart-btn"><i data-lucide="download"></i> Export CSV</button>
+                                    <button class="chart-btn"><i data-lucide="filter"></i> Filter</button>
+                                </div>
+                            </div>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Sold To Number</th>
+                                            <th>Sold To Name</th>
+                                            <th>Rebate Agreement Number</th>
+                                            <th>Net Sales Last 12 Months</th>
+                                            <th>Rebate Payout Last 12 Months</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>0001569859</td>
+                                            <td>Trinity Health Distribution Center</td>
+                                            <td>0000705481</td>
+                                            <td>$10,501,989</td>
+                                            <td>$560,166</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001036357</td>
+                                            <td>Mayo Foundation</td>
+                                            <td>0000705501</td>
+                                            <td>$7,672,563</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0002048632</td>
+                                            <td>Lakeland Supply Chain RDC EFL</td>
+                                            <td>0000701406</td>
+                                            <td>$4,736,165</td>
+                                            <td>$623,538</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001965697</td>
+                                            <td>Mayo Foundation</td>
+                                            <td>0000706760</td>
+                                            <td>$6,719,942</td>
+                                            <td>$10,326,147</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001518295</td>
+                                            <td>Baycare Health System Service Center</td>
+                                            <td>0000703016</td>
+                                            <td>$2,941,760</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0002048632</td>
+                                            <td>Lakeland Supply Chain RDC EFL</td>
+                                            <td>-</td>
+                                            <td>$2,474,113</td>
+                                            <td>$268,732</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001508718</td>
+                                            <td>NYU Langone Tisch Hospital</td>
+                                            <td>0000707262</td>
+                                            <td>$3,744,300</td>
+                                            <td>$23,060</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001063183</td>
+                                            <td>St Lukes Medical Center</td>
+                                            <td>0000707645</td>
+                                            <td>$8,066,700</td>
+                                            <td>$1,232,000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0001063641</td>
+                                            <td>Cornwall General Hospital</td>
+                                            <td>0000708885</td>
+                                            <td>$3,782,873</td>
+                                            <td>$01,571</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0002048632</td>
+                                            <td>Lakeland Supply Chain RDC EFL</td>
+                                            <td>0000701201</td>
+                                            <td>$2,276,550</td>
+                                            <td>$451,180</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+
+                        <!-- Rebate Agreement Details Table -->
+                        <div class="chart-placeholder full-width">
+                            <div class="chart-header">
+                                <div class="chart-title">Rebate Agreement Details</div>
+                                <div class="chart-actions">
+                                    <button class="chart-btn"><i data-lucide="download"></i> Export CSV</button>
+                                    <button class="chart-btn"><i data-lucide="eye"></i> View Details</button>
+                                </div>
+                            </div>
+                            <div class="data-table-container">
+                                <table class="data-table agreement-details">
+                                    <thead>
+                                        <tr>
+                                            <th>Rebate Agreement Number</th>
+                                            <th>Rebate Agreement Name</th>
+                                            <th>Rebate Agreement Start Date</th>
+                                            <th>Rebate Agreement End Date</th>
+                                            <th>Customer Number</th>
+                                            <th>Business Unit</th>
+                                            <th>Qualification Code</th>
+                                            <th>Qualification Display Type</th>
+                                            <th>Qualification Product Type</th>
+                                            <th>Contract Expire in Group</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>0000700004</td>
+                                            <td>CSF COOPERATIVE SERV</td>
+                                            <td>4/27/2019</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001068332</td>
+                                            <td>Structural Heart</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>CoreValve</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700015</td>
+                                            <td>CROZER CHESTER MED</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001068517</td>
+                                            <td>Structural Heart</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>CoreValve</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700021</td>
+                                            <td>UNIV HEALTH MEXICO</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001067060</td>
+                                            <td>GIs</td>
+                                            <td>Q01</td>
+                                            <td>Flex Grp</td>
+                                            <td>UNIV NEW MEXICO</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700041</td>
+                                            <td>OREGON HEALTH SCI</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001073776</td>
+                                            <td>Aortic</td>
+                                            <td>Q01</td>
+                                            <td>Bus Unit</td>
+                                            <td>Aortic</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700068</td>
+                                            <td>EL CAMINO HOSPITAL</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001069023</td>
+                                            <td>Structural Heart</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>CoreValve</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700109</td>
+                                            <td>CARTERET GENERAL HOS</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001225518</td>
+                                            <td>Coronary</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>Drug Eluting Stents</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700114</td>
+                                            <td>ST MICHAELS MED CTR</td>
+                                            <td>2/22/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001099546</td>
+                                            <td>Structural Heart</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>Drug Eluting Stents</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700126</td>
+                                            <td>OREGON HEALTH SCI</td>
+                                            <td>1/25/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>-</td>
+                                            <td>Coronary</td>
+                                            <td>Q01</td>
+                                            <td>Bus Unit</td>
+                                            <td>Coronary</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700128</td>
+                                            <td>VETERANS HEALTH</td>
+                                            <td>6/22/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001099366</td>
+                                            <td>Coronary</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp3</td>
+                                            <td>Angio Med 400</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0000700140</td>
+                                            <td>MOUNT SINAI MED CTR</td>
+                                            <td>2/7/2020</td>
+                                            <td>4/28/2014</td>
+                                            <td>0001079830</td>
+                                            <td>Structural Heart</td>
+                                            <td>Q01</td>
+                                            <td>Mat Grp2</td>
+                                            <td>CoreValve</td>
+                                            <td>>6 Months</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <i data-lucide="shield"></i>
+                <span>Confidential. For internal use only. • Operational Dashboard v2.1 • Data Sources: Vistex, SalesForce • Reduces manual reporting from 2-6 hours to real-time</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
